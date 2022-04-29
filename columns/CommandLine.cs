@@ -13,7 +13,7 @@ public class AppOptions
 {
     public string Columns { get; init; }
 
-    public uint ColumnStep { get; init; }
+    public int ColumnStep { get; init; }
 
     public bool Debug { get; init; }
 
@@ -61,12 +61,12 @@ public class CommandLine
             rootCommand.Name = "columns";
             rootCommand.Description = "Extract columns from lines in a file.";
 
-            rootCommand.Handler = CommandHandler.Create<string, bool, string, string, string, uint?>((columns, debug, ifs, input, ofs, step) =>
+            rootCommand.Handler = CommandHandler.Create<string, bool, string, string, string, int?>((columns, debug, ifs, input, ofs, step) =>
             {
                 Options.App = new()
                 {
                     Columns = columns,
-                    ColumnStep = step is null ? 1 : step.Value,
+                    ColumnStep = step.GetValueOrDefault(1),
                     Debug = debug,
                     InputDelimiter = ifs is null ? "," : ifs,
                     InputFile = String.IsNullOrEmpty(input) ? "-" : input,

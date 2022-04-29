@@ -98,8 +98,8 @@ public class ColumnSubset : IEnumerable<string>
 
     public void InitializeEnumerator(out uint start, out uint end, out int step, out int idx, out bool isSteppingForward)
     {
-        start = (uint)(Start.IsFromEnd ? (Columns.Length - 1 - Start.Value) : Start.Value);
-        end = (uint)(End.IsFromEnd ? (Columns.Length - 1 - End.Value) : End.Value);
+        start = (uint)(Start.IsFromEnd ? (Columns.Length - Start.Value) : Start.Value);
+        end = (uint)(End.IsFromEnd ? (Columns.Length - End.Value) : End.Value);
 
         start = (uint)Math.Clamp(start, 0, Columns.Length - 1);
         end = (uint)Math.Clamp(end, 0, Columns.Length - 1);
