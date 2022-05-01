@@ -22,7 +22,6 @@ The --step option is the column enumeration step.  The defualt is 1.
 # Usage
 
 ```
-$ columns --help
 Description:
   Extract columns from lines in a file.
 
@@ -35,6 +34,8 @@ Options:
   --ifs <ifs>                     Delimiter for Input Columns
   --input <input>                 Input File
   --ofs <ofs>                     Delimiter for Output Columns
+  --regex <regex>                 Regex Substitute Pattern for the Extracted Columns
+  --regexColumns <regexColumns>   List of Columns included in Regex Substitution
   --step <step>                   Column Traversal Step
   --version                       Show version information
   -?, -h, --help                  Show help and usage information
@@ -51,7 +52,8 @@ $ echo '0,1,2,3' | columns --ifs , --columns 0-^0
 
 All columns using ^0 and 0 (in reverse).
 
-```bash echo '0,1,2,3' | columns --ifs , --columns ^0-0
+```bash
+$ echo '0,1,2,3' | columns --ifs , --columns ^0-0
 3,2,1,0
 ```
 
@@ -62,3 +64,11 @@ $ echo '0,1,2,3,4\n5,6,7,8,9' | columns --ifs , --columns 0-^0 --step 2
 0,2,4
 5,7,9
 ```
+
+All columns, in reverse, with a regex over a separate set of columns.
+
+```bash
+$ echo '1a,2b,3c,4d' | columns --ifs , --columns ^0-0 --regex 's/\d//' --regexColumns ^1-^2,0
+d,3c,b,a
+```
+
