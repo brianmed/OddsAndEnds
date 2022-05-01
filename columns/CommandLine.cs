@@ -13,6 +13,10 @@ public class AppOptions
 {
     public string Columns { get; init; }
 
+    public string ColumnsIncludedInRegex { get; init; }
+
+    public string[] ColumnRegex { get; init; }
+
     public int ColumnStep { get; init; }
 
     public bool Debug { get; init; }
@@ -52,6 +56,14 @@ public class CommandLine
                 {
                     IsRequired = false
                 },
+                new Option<string>("--regex", description: "Regex Substitute Pattern for the Extracted Columns")
+                {
+                    IsRequired = false
+                },
+                new Option<string>("--regexColumns", description: "List of Columns included in Regex Substitution")
+                {
+                    IsRequired = false
+                },
                 new Option<int>("--step", description: "Column Traversal Step")
                 {
                     IsRequired = false
@@ -61,11 +73,22 @@ public class CommandLine
             rootCommand.Name = "columns";
             rootCommand.Description = "Extract columns from lines in a file.";
 
-            rootCommand.Handler = CommandHandler.Create<string, bool, string, string, string, int?>((columns, debug, ifs, input, ofs, step) =>
+            rootCommand.Handler = CommandHandler.Create<string, bool, string, string, string, string, string, int?>((columns, debug, ifs, input, ofs, regexColumns, regex, step) =>
             {
+                List<string> findAndReplace = new();
+
+                if (regex is not null) {
+                    char splitOn = regex[1];
+
+                    findAndReplace.Add(regex.Split(splitOn)[1]);
+                    findAndReplace.Add(regex.Split(splitOn)[^2]);
+                }
+
                 Options.App = new()
                 {
                     Columns = columns,
+                    ColumnsIncludedInRegex = String.IsNullOrEmpty(regexColumns) ? String.Empty : regexColumns,
+                    ColumnRegex = findAndReplace.ToArray(),
                     ColumnStep = step.GetValueOrDefault(1),
                     Debug = debug,
                     InputDelimiter = ifs is null ? "," : ifs,

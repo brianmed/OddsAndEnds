@@ -2,6 +2,8 @@
 // json ?input? and output
 namespace OddsAndEnds;
 
+using System.Text.RegularExpressions;
+
 internal class Program
 {
     static void Main(string[] args)
@@ -14,6 +16,13 @@ internal class Program
 
         using (StreamReader stdin = new(inputStream))
         {
+            string[] regexRangeDeclaraions = String.IsNullOrEmpty(Options.App.ColumnsIncludedInRegex)
+                ? Enumerable.Empty<string>().ToArray()
+                : Options.App.ColumnsIncludedInRegex
+                    .Split(',')
+                    .Select(c => c.Trim())
+                    .ToArray();
+
             while(stdin.ReadLine() is string line && line is not null)
             {
                 if (Options.App.Debug) {
@@ -28,6 +37,10 @@ internal class Program
                 string[] columns = line
                     .Split(Options.App.InputDelimiter);
 
+                RegexSubset[] regexSubsets = regexRangeDeclaraions
+                    .Select(r => new RegexSubset(r, columns))
+                    .ToArray();
+
                 IEnumerable<string> declarations = columnRangeDeclaraions;
 
                 foreach ((string Text, int Index) declaration in declarations.Select((c, idx) => (c, idx)))
@@ -40,7 +53,15 @@ internal class Program
 
                         bool isAtEndOfColumns = column.Index == columnsSubset.Count() - 1;
 
-                        Console.Write($"{column.Text}{((isAtEndOfDeclarations && isAtEndOfColumns) ? String.Empty : Options.App.OutputDelimiter)}");
+                        string text = column.Text;
+
+                        if (Options.App.ColumnRegex.Length == 2) {
+                            if (regexSubsets.Where(rs => rs.Where(s => s == column.Index).Any()).Any()) {
+                                text = Regex.Replace(text, Options.App.ColumnRegex[0], Options.App.ColumnRegex[1]);
+                            }
+                        }
+
+                        Console.Write($"{text}{((isAtEndOfDeclarations && isAtEndOfColumns) ? String.Empty : Options.App.OutputDelimiter)}");
                     }
                 }
 
