@@ -19,7 +19,9 @@ The --columns allow for several types of ranges.
 
 The --step option is the column enumeration step.  The defualt is 1.
 
-```bash
+# Usage
+
+```
 $ columns --help
 Description:
   Extract columns from lines in a file.
