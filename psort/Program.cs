@@ -25,12 +25,12 @@ Options:
             int delaySeconds = 5;
             bool distinct = false;
 
-            if (args.Where(a => a.StartsWith("-s")).FirstOrDefault() is string argDelaySeconds && argDelaySeconds is not null)
+            if (args.Where(a => a.StartsWith("-s")).Any())
             {
                 delaySeconds = Int32.Parse(args.Where(a => a.StartsWith("-s")).Skip(1).FirstOrDefault() ?? "5");
             }
 
-            if (args.Where(a => a.StartsWith("-u")).FirstOrDefault() is string argDistinct && argDistinct is not null)
+            if (args.Where(a => a.StartsWith("-u")).Any())
             {
                 distinct = true;
             }
